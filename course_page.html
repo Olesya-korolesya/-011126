@@ -1,0 +1,70 @@
+{{% extends 'courses/base.html' %}
+
+{% block title %}{{ course.title }} - EduPlatform{% endblock %}
+
+{% block content %}
+<h2>Курс: {{ course.title }}</h2>
+<p>{{ course.description }}</p>
+
+<p><strong>Рейтинг курса:</strong> ⭐ {{ course.get_average_rating }} / 5.0</p>
+
+<hr>
+
+<h3>О преподавателе</h3>
+<p><strong>{{ course.instructor.first_name }} {{ course.instructor.last_name }}</strong></p>
+<p>Специализация: {{ course.instructor.specialization }}</p>
+<p>Рейтинг преподавателя: ⭐ {{ course.instructor.rating }} / 5.0</p>
+
+<hr>
+
+<h3>Программа курса</h3>
+{% if course.lessons.all %}
+    <ol style="padding-left: 20px;">
+        {% for lesson in course.lessons.all %}
+            <li style="margin-bottom: 10px;">
+                <strong>{{ lesson.title }}</strong>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">{{ lesson.content|truncatewords:15 }}</p>
+            </li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <p style="color: #7f8c8d;">Для этого курса еще не добавлено ни одного урока.</p>
+{% endif %}
+
+<hr>
+
+<p><strong>Стоимость курса:</strong> {{ course.price }} ₽</p>
+<p><strong>Длительность:</strong> {{ course.duration_hours }} часов</p>
+<p><strong>Сложность:</strong> <span class="badge">{{ course.get_difficulty_display }}</span></p>
+
+<p><strong>Места:</strong>
+    {% if course.max_students %}
+        осталось {{ course.get_available_spots }} мест
+    {% else %}
+        безлимитный доступ
+    {% endif %}
+</p>
+
+<div style="margin-top: 30px;">
+    <a href="#" class="btn">Записаться на курс</a>
+    <p style="font-size: 13px; color: #7f8c8d; margin-top: 5px;">Доступ откроется сразу после оплаты</p>
+</div>
+
+<hr>
+
+<h3>Отзывы студентов</h3>
+{% if course.reviews.all %}
+    {% for review in course.reviews.all %}
+        <div style="background: #f9f9f9; border-left: 4px solid #3498db; padding: 10px 15px; margin-bottom: 15px; border-radius: 0 4px 4px 0;">
+            <p style="margin: 0; font-weight: bold;">{{ review.student.first_name }} {{ review.student.last_name }} — оценка: ⭐ {{ review.rating }}/5</p>
+            {% if review.comment %}
+                <p style="margin: 5px 0 0 0; font-style: italic; color: #444;">"{{ review.comment }}"</p>
+            {% endif %}
+            <small style="color: #999;">{{ review.created_at|date:"d.m.Y" }}</small>
+        </div>
+    {% endfor %}
+{% else %}
+    <p style="color: #7f8c8d;">Отзывов пока нет. Будьте первым, кто оставит отзыв!</p>
+{% endif %}
+
+{% endblock %}
